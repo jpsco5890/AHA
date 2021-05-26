@@ -1,23 +1,34 @@
 #!usr/bin/perl -w
 use strict;
+
+# Create an empty array to hold primers
 my (@primers);
+# Read in flags from the command line
 my ($insSeqFile, $vectSeqFile, $printFile) = checkFlags (\@ARGV);
+
+# Read in data from the insert sequence file [$insSeqFile] and the name of the vector sequence file [$vectSeqFile] and assign these to the 
+# sequence array [@sequences] and the vector file identifier [$vector]
 my (@sequences) = readInsertSeqs ($insSeqFile);
 my ($vector) = getVector($vectSeqFile);
-if ($#sequences == 1) {
-	#my (@primers) = makePrimers (\@sequences, $vector, 1);
-	die ("Sorry, this program does not support single insert sequences at the moment. Check back later.\n");
+
+# Checks to see how many inserts are intended to be inserted into the vector
+if ($#sequences < 3) {
+	##my (@primers) = makePrimers (\@sequences, $vector, 1);
+	die ("Sorry, this program does not support less than two insert sequences at the moment. Check back later.\n");
 } elsif ($#sequences == 3) {
 	@primers = makePrimers (\@sequences, $vector, 2);
 } else {
 	die ("Sorry, this program cannot handle more than two insert sequences at the moment. Cehck back later.\n");
 }
-#my ($USF, $USR, $DSF, $DSR, $VectF, $VectR) = @primers;
+
+# Create variables for printing the DELPRIMERS format
 my ($USName, $DSName, $VectName) = ($sequences[0], $sequences[2], $vector);
 my (@dateTime) = localtime ();
 $dateTime[5] += 1900;
 my (@days) = ("SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT");
 my (@months) = ("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOv", "DEC");
+
+# Print the primers to the designated output
 open (DELPRIMERS, ">" . $printFile) || die ("Cannot open $printFile to write: $!\n");
 write (DELPRIMERS);
 close (DELPRIMERS) || die ("Cannot close $printFile: $!\n");
@@ -125,13 +136,6 @@ sub findHomologies {
 	}
 	return (@homologies);
 }
-##pJQ200sk
-#USF: [25bp 5'e Vect] - [5'e US]
-#USR: [25 bp Rc 5'e DS] - [Rc 3'e US]
-#DSF: [25 bp 3'e US] - [5'e DS]
-#DSR: [25 bp Rc 3'e Vect] - [Rc 3' DS]
-#VectF: [25 bp Rc 3'e DS] - [3'e Vect]
-#VectR: [25 bp Rc 5'e US] - [Rc 5'e Vect]
 sub hom2Prim {
 	my ($homologRef, $num, $i, $primer, @primers) = @_;
 	if ($num == 1) {
@@ -177,6 +181,7 @@ sub makePrimers {
 	my (@primers) = hom2Prim (\@homologies, $num);
 	return (@primers);
 }
+
 #Formats ->
 format DELPRIMERS =
 Created on @<< @<< @< @<<< at @<:@<:@<
