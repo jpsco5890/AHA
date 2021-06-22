@@ -18,7 +18,7 @@ if ($#sequences < 3) {
 } elsif ($#sequences == 3) {
 	@primers = makePrimers (\@sequences, $vector, 2);
 } else {
-	die ("Sorry, this program cannot handle more than two insert sequences at the moment. Cehck back later.\n");
+	die ("Sorry, this program cannot handle more than two insert sequences at the moment. Check back later.\n");
 }
 
 # Create variables for printing the DELPRIMERS format
