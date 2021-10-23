@@ -169,7 +169,6 @@ sub makePrimers {
 	my ($insertRef, $vector, $num, @homologies) = @_;
 	@homologies = findHomologies ($insertRef, $num, 0);
 	if ($vector eq "pJQ200sk") {
-	#	push (@homologies, ("GCTCTAGAACTAGTGGATCCCCCGG","CCCTCACTAAAGGGAACAAAAGCTGGA"));
 		push (@homologies, ("GCTCTAGAACTAGTGGATCCCCCGG","CCCTCACTAAAGGGAACAAAAGCTGGAG"));
 #	} elsif ($vector eq "pBBPgdh") {
 #		push (@homologies, ("GCTTGATATCGAATTCCTGCAGCCCG", "GCGCTCACTGGCCGTCGTTTTACAA"));
