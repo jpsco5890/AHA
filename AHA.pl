@@ -35,33 +35,32 @@ close (DELPRIMERS) || die ("Cannot close $printFile: $!\n");
 print ("Primer sequences were successfully generated and printed to $printFile\n");
 #Subroutines ------->
 sub checkFlags {
-	my ($ARGVRef, $insFile, $vectFile, $printFile, $i, $response) = @_;
-	if (defined ($ARGVRef)) {
-		for ($i = 0; $i <= $#{$ARGVRef}; $i++ ) {
-			if (${$ARGVRef}[$i] eq "-h" || ${$ARGVRef}[$i] eq "--help") {
-				open (HELP, "<help.txt") || die ("Cannot open 'help.txt' for reading: $!\n");
-				while (<HELP>) {
-					print $_;
-				}
-				close (HELP) || die ("Cannot close 'help.txt' after reading: $!\n");
-				exit (0);
-			} elsif (${$ARGVRef}[$i] eq "-i" || ${$ARGVRef}[$i] eq "--insert" && ($i + 1) <= $#{$ARGVRef}) {
-				chomp ($insFile = ${$ARGVRef}[$i + 1]);
-			} elsif (${$ARGVRef}[$i] eq "-v" || ${$ARGVRef}[$i] eq "--vector" && ($i + 1) <= $#{$ARGVRef}) {
-				chomp ($vectFile = ${$ARGVRef}[$i + 1]);
-			} elsif (${$ARGVRef}[$i] eq "-p" || ${$ARGVRef}[$i] eq "--printFile" && ($i + 1) <= $#{$ARGVRef}) {
-				chomp ($printFile = ${$ARGVRef}[$i + 1]);
-				if (-e $printFile) {
-					print ("$printFile already exists. Do you really wish to overwrite this file rather than append it? [y/N]: ");
-					chomp ($response = <STDIN>);
-					print ("$response\n");
-					($response eq "y") || ($response eq "Y") || ($printFile = ">" . $printFile);
-				}
-			} elsif (${$ARGVRef}[$i] =~ /^-+.*/) {
-				die ("${$ARGVRef}[$i] is an invalid flag option. Program terminated.\nFor more information use the -h/--help flag\n");
-			}
+	my ($ARGVRef, $insFile, $vectFile, $printFile, $response, @i_flags, @v_flags, @p_flags, %ARGVHash) = @_;
+	if (grep /^-+h.*\b/, @{$ARGVRef}) {
+		open (HELP, "<help.txt") || die ("Cannot open 'help.txt' for reading: $!\n");
+		while (<HELP>) {
+			print $_;
 		}
+		close (HELP) || die ("Cannot close 'help.txt' after reading: $!\n");
+		exit (0);
 	}
+
+	%ARGVHash = @{$ARGVRef};
+	grep (/^-+[^ivp].*\b/, keys (%ARGVHash)) || die ("You have used an invalid flag. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
+
+	@i_flags = grep (/^-+i.*\b/, keys (%ARGVHash));
+	@v_flags = grep (/^-+v.*\b/, keys (%ARGVHash));
+	@p_flags = grep (/^-+p.*\b/, keys (%ARGVHash));
+	$insFile = $ARGVHash{$i_flags[0]};
+	$vectFile = $ARGVHash{$v_flags[0]};
+	$printFile = $ARGVHash{$p_flags[0]};
+
+	if (-e $printFile) {
+		print ("$printFile already exists. Do you really wish to overwrite this file rather than append it? [y/N]: ");
+		chomp ($response = <STDIN>);
+		($response =~ /^y.*\b/i) || ($printFile = ">" . $printFile);
+	}
+
 	return ($insFile, $vectFile, $printFile);
 }
 sub readInsertSeqs {
