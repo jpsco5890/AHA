@@ -36,7 +36,6 @@ print ("Primer sequences were successfully generated and printed to $printFile\n
 #Subroutines ------->
 sub checkFlags {
 	my ($ARGVRef, $i, $response, @flag, @files, %ARGVHash) = @_;
-
 	if (grep /^-+h.*\b/, @{$ARGVRef}) {
 		open (HELP, "<help.txt") || die ("Cannot open 'help.txt' for reading: $!\n");
 		while (<HELP>) {
@@ -45,24 +44,19 @@ sub checkFlags {
 		close (HELP) || die ("Cannot close 'help.txt' after reading: $!\n");
 		exit (0);
 	}
-
 	($#{$ARGVRef} + 1) % 2 == 0 || die ("Looks like some of your flags do not have values, make sure each flag has a value.\n");
 	($#{$ARGVRef} + 1) == 6 || die ("Looks like you have the wrong number of flags. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
-
 	%ARGVHash = @{$ARGVRef};
 	grep (/^-{1,2}[^ivp\W]{1}.*\b/, keys (%ARGVHash)) && die ("You have used an invalid flag. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
-
 	foreach $i (qw/i v p/) {
 		@flag = grep (/^-+$i.*\b/, keys (%ARGVHash));
 		push (@files, $ARGVHash{$flag[0]});
 	}
-
 	if (-e $files[2]) {
 		print ("$files[2] already exists. Do you really wish to overwrite this file rather than append it? [y/N]: ");
 		chomp ($response = <STDIN>);
 		($response =~ /^y.*\b/i) || ($files[2] = ">" . $files[2]);
 	}
-
 	return (@files);
 }
 sub readInsertSeqs {
@@ -80,7 +74,7 @@ sub getVector {
 	if ($fileName =~ /pjq200sk/i) {
 		return ("pJQ200sk");
 	} elsif ($fileName =~ /pbbpgdh/i) {
-		die ("Sorry, this progrma cannot handle pBBPgdh primer sequence construction at the moment. Check back later.\n");
+		die ("Sorry, this program cannot handle pBBPgdh primer sequence construction at the moment. Check back later.\n");
 		#return ("pBBPgdh");
 	} elsif (-e $fileName) {
 		return ($fileName);
