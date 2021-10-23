@@ -36,6 +36,7 @@ print ("Primer sequences were successfully generated and printed to $printFile\n
 #Subroutines ------->
 sub checkFlags {
 	my ($ARGVRef, $insFile, $vectFile, $printFile, $response, @i_flags, @v_flags, @p_flags, %ARGVHash) = @_;
+
 	if (grep /^-+h.*\b/, @{$ARGVRef}) {
 		open (HELP, "<help.txt") || die ("Cannot open 'help.txt' for reading: $!\n");
 		while (<HELP>) {
@@ -45,8 +46,11 @@ sub checkFlags {
 		exit (0);
 	}
 
+	($#{$ARGVRef} + 1) % 2 == 0 || die ("Looks like some of your flags do not have values, make sure each flag has a value.\n");
+	($#{$ARGVRef} + 1) == 6 || die ("Looks like you have the wrong number of flags. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
+
 	%ARGVHash = @{$ARGVRef};
-	grep (/^-+[^ivp].*\b/, keys (%ARGVHash)) || die ("You have used an invalid flag. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
+	grep (/^-{1,2}[^ivp\W]{1}.*\b/, keys (%ARGVHash)) && die ("You have used an invalid flag. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
 
 	@i_flags = grep (/^-+i.*\b/, keys (%ARGVHash));
 	@v_flags = grep (/^-+v.*\b/, keys (%ARGVHash));
