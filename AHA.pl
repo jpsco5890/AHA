@@ -6,7 +6,7 @@ my (@primers);
 # Read in flags from the command line
 my ($insSeqFile, $vectSeqFile, $printFile) = checkFlags (\@ARGV);
 
-# Read in data from the insert sequence file [$insSeqFile] and the name of the vector sequence file [$vectSeqFile] and assign these to the 
+# Read in data from the insert sequence file [$insSeqFile] and the name of the vector sequence file [$vectSeqFile] and assign these to the
 # sequence array [@sequences] and the vector file identifier [$vector]
 my (@sequences) = readInsertSeqs ($insSeqFile);
 my ($vector) = getVector($vectSeqFile);
@@ -39,7 +39,11 @@ sub checkFlags {
 	if (defined ($ARGVRef)) {
 		for ($i = 0; $i <= $#{$ARGVRef}; $i++ ) {
 			if (${$ARGVRef}[$i] eq "-h" || ${$ARGVRef}[$i] eq "--help") {
-				print ("Auto Homology-Appending\n\nProgram for generating overangs of homology to add to primers for amplifying inserts and vector backbones for homologous recombination mediated plasmid construction.\n\n\t-i/--insert:\tThis flag prompts the program to open the specified file to access the insert sequences (Should be in FASTA format).\n\t-v/--vector:\tThis flag prompts the program to open the specified file to access the vecotr sequence (Should be in FASTA format). Additionally, this flag can be used to specify a pre-loaded vector (e.g. pJQ200sk)\n\t-p/--printFile:\tThis flag prompts the program to write the primer sequences to the specified file.\n\t-h/--help:\tThis flag will print this screen then quit the program.\n");
+				open (HELP, "<help.txt") || die ("Cannot open 'help.txt' for reading: $!\n");
+				while (<HELP>) {
+					print $_;
+				}
+				close (HELP) || die ("Cannot close 'help.txt' after reading: $!\n");
 				exit (0);
 			} elsif (${$ARGVRef}[$i] eq "-i" || ${$ARGVRef}[$i] eq "--insert" && ($i + 1) <= $#{$ARGVRef}) {
 				chomp ($insFile = ${$ARGVRef}[$i + 1]);
