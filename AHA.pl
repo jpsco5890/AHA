@@ -33,10 +33,17 @@ open (DELPRIMERS, ">" . $printFile) || die ("Cannot open $printFile to write: $!
 write (DELPRIMERS);
 close (DELPRIMERS) || die ("Cannot close $printFile: $!\n");
 print ("Primer sequences were successfully generated and printed to $printFile\n");
+
+
 #Subroutines ------->
 sub checkFlags {
 	my ($ARGVRef, $i, $response, @flag, @files, %ARGVHash) = @_;
+
+
+	# Check if a help flag was specified (matches -h and --help)
 	if (grep /^-+h.*\b/, @{$ARGVRef}) {
+
+		# Opens the file 'help.txt' for reading, prints the contents to STDOUT for the user, closes the file and exits the script
 		open (HELP, "<help.txt") || die ("Cannot open 'help.txt' for reading: $!\n");
 		while (<HELP>) {
 			print $_;
@@ -44,21 +51,37 @@ sub checkFlags {
 		close (HELP) || die ("Cannot close 'help.txt' after reading: $!\n");
 		exit (0);
 	}
-	($#{$ARGVRef} + 1) % 2 == 0 || die ("Looks like some of your flags do not have values, make sure each flag has a value.\n");
-	($#{$ARGVRef} + 1) == 6 || die ("Looks like you have the wrong number of flags. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
+
+	# Checks whether the number of flags and values are 6
+	# This will catch if there is an unexpeected flag:value ratio or the wrong number of flags, and ensures the @{$ARGVRef} array can be mapped to a hash
+	($#{$ARGVRef} + 1) == 6 || die ("Looks like you have the wrong number of flags, flag values, or both. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
+
+	# Convert the @ARGV values to a hash for simpler flag inquiries
 	%ARGVHash = @{$ARGVRef};
+
+# Check for invalid flags since all valid flags should start with -{1,2}[ivp].
+# This should catch when wrong flags are called or if a flag has more than one value.
 	grep (/^-{1,2}[^ivp\W]{1}.*\b/, keys (%ARGVHash)) && die ("You have used an invalid flag. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
+
+	# Loops through each expected flag and stores the associated values in the @flag array
 	foreach $i (qw/i v p/) {
 		@flag = grep (/^-+$i.*\b/, keys (%ARGVHash));
 		push (@files, $ARGVHash{$flag[0]});
 	}
+
+	# Check if the file exists, and provide a warning and option to append rather than rewrite
 	if (-e $files[2]) {
 		print ("$files[2] already exists. Do you really wish to overwrite this file rather than append it? [y/N]: ");
 		chomp ($response = <STDIN>);
+
+		# prepend '>' to append the specified output file if the user requests
 		($response =~ /^y.*\b/i) || ($files[2] = ">" . $files[2]);
 	}
+
+	# Return the user specified values for the insert sequence file, vector/vector sequence file, and the output file
 	return (@files);
 }
+
 sub readInsertSeqs {
 	my ($fileName, $i) = @_;
 	open (INSERTSEQS, $fileName) || die ("Cannot open $fileName for reading: $!\n");
