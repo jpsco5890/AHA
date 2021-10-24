@@ -101,17 +101,21 @@ sub readInsertSeqs {
 
 sub getVector {
 	my ($fileName) = @_;
+
+	# Check if the user-specified vector matches a preloaded sequence and either return the sequence or a message indicating the status of the sequence then kill the program
 	if ($fileName =~ /pjq200sk/i) {
 		return ("pJQ200sk");
 	} elsif ($fileName =~ /pbbpgdh/i) {
 		die ("Sorry, this program cannot handle pBBPgdh primer sequence construction at the moment. Check back later.\n");
 		#return ("pBBPgdh");
 	} elsif (-e $fileName) {
+		# Return the filename for a vector sequence if it exists
 		return ($fileName);
 	} else {
 		die ("$fileName does not exist. Program was terminated because no valid vector was loaded in.\n");
 	}
 }
+
 sub revComp {
 my ($seq, $revOnly, $compOnly) = @_;
 	$seq =~ tr/a-z/A-Z/;
