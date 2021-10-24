@@ -59,8 +59,8 @@ sub checkFlags {
 	# Convert the @ARGV values to a hash for simpler flag inquiries
 	%ARGVHash = @{$ARGVRef};
 
-# Check for invalid flags since all valid flags should start with -{1,2}[ivp].
-# This should catch when wrong flags are called or if a flag has more than one value.
+	# Check for invalid flags since all valid flags should start with -{1,2}[ivp].
+	# This should catch when wrong flags are called or if a flag has more than one value.
 	grep (/^-{1,2}[^ivp\W]{1}.*\b/, keys (%ARGVHash)) && die ("You have used an invalid flag. Please check the help documentation with '-h' or '--help' and the README.md document.\n");
 
 	# Loops through each expected flag and stores the associated values in the @flag array
@@ -84,14 +84,21 @@ sub checkFlags {
 
 sub readInsertSeqs {
 	my ($fileName, $i) = @_;
-	open (INSERTSEQS, $fileName) || die ("Cannot open $fileName for reading: $!\n");
+
+	# Open the user specified sequence file and read in all lines to the @lines array, removing newline characters, and then close the file
+	open (INSERTSEQS, "<" .$fileName) || die ("Cannot open $fileName for reading: $!\n");
 	chomp (my (@lines) = <INSERTSEQS>);
 	close (INSERTSEQS) || die ("Cannot close $fileName: $!\n");
+
+	# Removes the leading '>' from each sequence name line
 	for ($i = 0; $i <= $#lines; $i+=2) {
 		$lines[$i] =~ s/^>(.*)/$1/;
 	}
+
+	# Returns the @lines array containing the renamed sequences
 	return (@lines);
 }
+
 sub getVector {
 	my ($fileName) = @_;
 	if ($fileName =~ /pjq200sk/i) {
