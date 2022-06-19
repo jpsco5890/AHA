@@ -87,7 +87,7 @@ sub readInsertSeqs {
 	my ($fileName, $i) = @_;
 
 	# Open the user specified sequence file and read in all lines to the @lines array, removing newline characters, and then close the file
-	open (INSERTSEQS, "<" .$fileName) || die ("Cannot open $fileName for reading: $!\n");
+	open (INSERTSEQS, "<" . $fileName) || die ("Cannot open $fileName for reading: $!\n");
 	chomp (my (@lines) = <INSERTSEQS>);
 	close (INSERTSEQS) || die ("Cannot close $fileName: $!\n");
 
@@ -113,7 +113,7 @@ sub getVector {
 		# Return the filename for a vector sequence if it exists
 		return ($fileName);
 	} else {
-		die ("$fileName does not exist. Program was terminated because no valid vector was loaded in.\n");
+		die ("$fileName does not exist.\nProgram was terminated because no valid vector was loaded in.\n");
 	}
 }
 
@@ -129,8 +129,8 @@ my ($seq, $revOnly, $compOnly) = @_;
 	}
 
 	return ($seq);
-
 }
+
 sub findHomologies {
 	my ($insertRef, $num, $vect, $const, $i, $seq, @tempSeq, @homologies) = @_;
 	$const++;
@@ -170,6 +170,7 @@ sub findHomologies {
 	}
 	return (@homologies);
 }
+
 sub hom2Prim {
 	my ($homologRef, $num, $i, $primer, @primers) = @_;
 	if ($num == 1) {
@@ -200,6 +201,7 @@ sub hom2Prim {
 	}
 	return (@primers);
 }
+
 sub makePrimers {
 	my ($insertRef, $vector, $num, @homologies) = @_;
 	@homologies = findHomologies ($insertRef, $num, 0);
