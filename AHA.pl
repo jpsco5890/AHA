@@ -1,5 +1,6 @@
 #!usr/bin/perl -w
 use strict;
+use FindBin qw ($Bin);
 
 # Create an empty array to hold primers
 my (@primers);
@@ -44,7 +45,7 @@ sub checkFlags {
 	if (grep /^-+h.*\b/, @{$ARGVRef}) {
 
 		# Opens the file 'help.txt' for reading, prints the contents to STDOUT for the user, closes the file and exits the script
-		open (HELP, "<help.txt") || die ("Cannot open 'help.txt' for reading: $!\n");
+		open (HELP, "<$Bin/help.txt") || die ("Cannot open 'help.txt' for reading: $!\n");
 		while (<HELP>) {
 			print $_;
 		}
