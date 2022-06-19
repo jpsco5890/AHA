@@ -1,6 +1,7 @@
 Auto Homology-Appending
 
-Program for generating overhangs of homology to add to primers for amplifying inserts and vector backbones for homologous recombination mediated plasmid construction.
+Program for generating overhangs of homology to add to primers for amplifying inserts and vector
+backbones for homologous recombination mediated plasmid construction.
 
 	-i/--insert:	This flag prompts the program to open the specified file to access the insert
 			sequences (Should be in FASTA format).
